@@ -16,6 +16,7 @@ function App() {
   const [city, setCity] = useState("Kathmandu");
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
+  const [searchHistory, setSearchHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async (event) => {
@@ -37,6 +38,16 @@ function App() {
       setWeather(data);
       setCity(data.name);
       setCityInput("");
+      setSearchHistory((previousHistory) => {
+        const updatedHistory = [
+          data.name,
+          ...previousHistory.filter(
+            (item) => item.toLowerCase() !== data.name.toLowerCase()
+          ),
+        ];
+
+        return updatedHistory.slice(0, 5);
+      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -209,9 +220,20 @@ function App() {
           </div>
 
           <div className="history-list">
-            <button className="history-item">Kathmandu</button>
-            <button className="history-item">Pokhara</button>
-            <button className="history-item">Delhi</button>
+            {searchHistory.length > 0 ? (
+              searchHistory.map((item) => (
+                <button
+                  className="history-item"
+                  key={item}
+                  type="button"
+                  onClick={() => setCityInput(item)}
+                >
+                  {item}
+                </button>
+              ))
+            ) : (
+              <p className="empty-history">No searches yet.</p>
+            )}
           </div>
         </section>
 
