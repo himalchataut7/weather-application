@@ -2,6 +2,15 @@ import { useState } from "react";
 import "./App.css";
 import { getCurrentWeather } from "./services/weatherApi";
 
+function formatTime(timestamp) {
+  if (!timestamp) return "--";
+
+  return new Date(timestamp * 1000).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 function App() {
   const [cityInput, setCityInput] = useState("");
   const [city, setCity] = useState("Kathmandu");
@@ -61,21 +70,39 @@ function App() {
           </button>
         </form>
 
-        {error && <p className="search-error">{error}</p>}
+        {loading && (
+          <div className="status-message loading-message" role="status">
+            Fetching weather data...
+          </div>
+        )}
+
+        {error && (
+          <div className="status-message error-message" role="alert">
+            {error}
+          </div>
+        )}
 
         <section className="weather-card">
-          {weather ? (
+          {loading ? (
+            <div className="weather-state">
+              <div className="loading-spinner" aria-hidden="true"></div>
+              <h2>Loading weather...</h2>
+              <p>Please wait while we fetch the latest conditions.</p>
+            </div>
+          ) : weather ? (
             <>
               <div className="weather-location">
-                <h2>{weather.name}</h2>
-                <p>{weather.country}</p>
+                <h2>
+                  {weather.name}, {weather.country}
+                </h2>
+                <p>Current weather conditions</p>
               </div>
 
               <div className="weather-main">
                 <div className="weather-icon">
                   <img
                     src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-                    alt={weather.condition}
+                    alt={weather.description}
                   />
                 </div>
 
@@ -85,7 +112,10 @@ function App() {
                 </div>
               </div>
 
-              <p className="condition">{weather.condition}</p>
+              <div className="condition-block">
+                <p className="condition">{weather.condition}</p>
+                <p className="weather-description">{weather.description}</p>
+              </div>
 
               <div className="weather-details">
                 <div className="detail-item">
@@ -109,6 +139,46 @@ function App() {
                   <div>
                     <p>Feels Like</p>
                     <strong>{Math.round(weather.feelsLike)}°C</strong>
+                  </div>
+                </div>
+
+                <div className="detail-item">
+                  <span className="detail-icon">⏲️</span>
+                  <div>
+                    <p>Pressure</p>
+                    <strong>{weather.pressure} hPa</strong>
+                  </div>
+                </div>
+
+                <div className="detail-item">
+                  <span className="detail-icon">👁️</span>
+                  <div>
+                    <p>Visibility</p>
+                    <strong>{weather.visibility} km</strong>
+                  </div>
+                </div>
+
+                <div className="detail-item">
+                  <span className="detail-icon">🌅</span>
+                  <div>
+                    <p>Sunrise</p>
+                    <strong>{formatTime(weather.sunrise)}</strong>
+                  </div>
+                </div>
+
+                <div className="detail-item">
+                  <span className="detail-icon">🌇</span>
+                  <div>
+                    <p>Sunset</p>
+                    <strong>{formatTime(weather.sunset)}</strong>
+                  </div>
+                </div>
+
+                <div className="detail-item">
+                  <span className="detail-icon">🌡️</span>
+                  <div>
+                    <p>Temperature</p>
+                    <strong>{Math.round(weather.temperature)}°C</strong>
                   </div>
                 </div>
               </div>
