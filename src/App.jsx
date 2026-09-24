@@ -1,6 +1,25 @@
+import { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [cityInput, setCityInput] = useState("");
+  const [city, setCity] = useState("Kathmandu");
+  const [error, setError] = useState("");
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const trimmedCity = cityInput.trim();
+
+    if (!trimmedCity) {
+      setError("Please enter a city name.");
+      return;
+    }
+
+    setCity(trimmedCity);
+    setCityInput("");
+    setError("");
+  };
+
   return (
     <div className="app">
       <div className="weather-container">
@@ -9,19 +28,27 @@ function App() {
           <p>Check the current weather in your city</p>
         </header>
 
-        <section className="search-section">
+        <form className="search-section" onSubmit={handleSearch}>
           <input
             type="text"
             placeholder="Enter city name..."
             className="search-input"
+            value={cityInput}
+            onChange={(event) => {
+              setCityInput(event.target.value);
+              if (error) setError("");
+            }}
+            aria-label="City name"
           />
-          <button className="search-button">Search</button>
-        </section>
+          <button type="submit" className="search-button">Search</button>
+        </form>
+
+        {error && <p className="search-error">{error}</p>}
 
         <section className="weather-card">
           <div className="weather-location">
-            <h2>Kathmandu</h2>
-            <p>Today, September 23</p>
+            <h2>{city}</h2>
+            <p>Today, September 24</p>
           </div>
 
           <div className="weather-main">
@@ -35,18 +62,9 @@ function App() {
           <p className="condition">Sunny</p>
 
           <div className="weather-details">
-            <div className="detail-item">
-              <span className="detail-icon">💧</span>
-              <div><p>Humidity</p><strong>65%</strong></div>
-            </div>
-            <div className="detail-item">
-              <span className="detail-icon">💨</span>
-              <div><p>Wind</p><strong>12 km/h</strong></div>
-            </div>
-            <div className="detail-item">
-              <span className="detail-icon">🌡️</span>
-              <div><p>Feels Like</p><strong>25°C</strong></div>
-            </div>
+            <div className="detail-item"><span className="detail-icon">💧</span><div><p>Humidity</p><strong>65%</strong></div></div>
+            <div className="detail-item"><span className="detail-icon">💨</span><div><p>Wind</p><strong>12 km/h</strong></div></div>
+            <div className="detail-item"><span className="detail-icon">🌡️</span><div><p>Feels Like</p><strong>25°C</strong></div></div>
           </div>
         </section>
 
@@ -62,11 +80,20 @@ function App() {
         <section className="dashboard-section">
           <div className="section-header"><h2>5-Day Forecast</h2></div>
           <div className="forecast-grid">
-            <div className="forecast-card"><p>Today</p><span className="forecast-icon">☀️</span><h3>24°C</h3><span>Sunny</span></div>
-            <div className="forecast-card"><p>Thu</p><span className="forecast-icon">🌤️</span><h3>25°C</h3><span>Partly Cloudy</span></div>
-            <div className="forecast-card"><p>Fri</p><span className="forecast-icon">🌧️</span><h3>22°C</h3><span>Rainy</span></div>
-            <div className="forecast-card"><p>Sat</p><span className="forecast-icon">☁️</span><h3>23°C</h3><span>Cloudy</span></div>
-            <div className="forecast-card"><p>Sun</p><span className="forecast-icon">☀️</span><h3>26°C</h3><span>Sunny</span></div>
+            {[
+              ["Today", "☀️", "24°C", "Sunny"],
+              ["Thu", "🌤️", "25°C", "Partly Cloudy"],
+              ["Fri", "🌧️", "22°C", "Rainy"],
+              ["Sat", "☁️", "23°C", "Cloudy"],
+              ["Sun", "☀️", "26°C", "Sunny"],
+            ].map(([day, icon, temp, condition]) => (
+              <div className="forecast-card" key={day}>
+                <p>{day}</p>
+                <span className="forecast-icon">{icon}</span>
+                <h3>{temp}</h3>
+                <span>{condition}</span>
+              </div>
+            ))}
           </div>
         </section>
       </div>
