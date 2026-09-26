@@ -1,5 +1,8 @@
 # Weather Application
-
+# screen short
+desktop view-(images/DESKTOPVIEW-VIEW.png)
+mobile view-(images/mobile-view.png)
+WEATHER DETAIL-(5-DAYS-FORCAST.png)
 A modern, responsive weather dashboard built with **React + Vite** that provides current weather conditions, a five-day forecast, city search, search history, temperature unit conversion, and browser-based geolocation.
 
 ## 🚀 Live Demo
